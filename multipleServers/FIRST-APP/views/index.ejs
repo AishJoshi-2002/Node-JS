@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+</head>
+<body>
+    <button id="server-1">Trigger 8000 Port Socket</button>
+    <button id="server-2">Trigger 8005 Port Socket</button>
+
+    <script>
+        console.log('Connecting to WebSocket...');
+        var socketServer1 = io("ws://localhost:8000");
+
+        socketServer1.on('connect', function() {
+            console.log('Connected to server1');
+        });
+
+        socketServer1.on('connect_error', function(error) {
+            console.error('Connection Error server1:', error);
+        });
+
+        var socketServer2 = io("ws://localhost:8005");
+
+        socketServer2.on('connect', function() {
+            console.log('Connected to server2');
+        });
+
+        socketServer2.on('connect_error', function(error) {
+            console.error('Connection Error server2:', error);
+        });
+
+        $(document).ready(function(){
+            $('#server-1').click(function(){
+                console.log('Button clicked, emitting event...');
+                socketServer1.emit('eventCreated', { message: 'Client hit the event for server 8000 port' });
+            });
+
+            $('#server-2').click(function(){
+                console.log('Button clicked, emitting event...');
+                socketServer2.emit('eventCreated', { message: 'Client hit the event for server 8005 port' });
+            });
+        });
+
+        socketServer1.on('responseFromServer1', function(data) {
+            // console.log('Response from server1:', data.message);
+            alert(data.message);
+        });
+
+        socketServer2.on('responseFromServer2', function(data) {
+            // console.log('Response from server2:', data.message);
+            alert(data.message);
+        });
+    </script>
+</body>
+</html>
